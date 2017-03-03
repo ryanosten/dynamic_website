@@ -1,22 +1,35 @@
 var Profile = require("./profile.js");
-var renderer = require("./renderer.js")
+var renderer = require("./renderer.js");
+var querystring = require('querystring');
+
 
 //Handle HTTP route GET / and POST i.e. home
 function home(request, response){
 //if url == "/" && GET
-if(request.url === '/'){
-	response.statusCode = 200;
-  	response.setHeader('Content-Type', 'text/plain');
-	renderer.view('header', {}, response);
-	renderer.view('search', {}, response);
-	renderer.view('footer', {}, response);
-	response.end();
-	}
-	//show search
+	if(request.url === '/'){
+
+		if(request.method.toLowerCase() === "get"){
+			response.statusCode = 200;
+		  response.setHeader('Content-Type', 'text/html');
+			renderer.view('header', {}, response);
+			renderer.view('search', {}, response);
+			renderer.view('footer', {}, response);
+			response.end();
+		} else {
+			//if url == "/" && POST
+
+			//get the post data from body
+			request.on("data", function(postBody){
+					var query = querystring.parse(postBody.toString());
+			});
+			//extract the username
+			//redirect to /:username
+		}		
+	} 		
 }
 
-	//if url == "/" && POST
-		//redirect to /:username
+
+	
 
 	
 
@@ -26,7 +39,7 @@ function user(request, response){
 	var username = request.url.replace('/', '');
 	if(username.length > 0){
 		response.statusCode = 200;
-	  	response.setHeader('Content-Type', 'text/plain');
+	  	response.setHeader('Content-Type', 'text/html');
 		renderer.view('header', {}, response);
 
 		//get the JSON from treehouse
@@ -41,7 +54,7 @@ function user(request, response){
 				avatarURL: profileJSON.gravatar_url,
 				username: profileJSON.profile_name,
 				badges: profileJSON.badges.length ,
-				javascriptPoints: profileJSON.points.Javascript
+				javascriptPoints: profileJSON.points.JavaScript
 			}
 			//simple response
 			renderer.view('profile', values, response);
