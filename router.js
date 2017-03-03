@@ -6,10 +6,11 @@ function home(request, response){
 //if url == "/" && GET
 if(request.url === '/'){
 	response.statusCode = 200;
-  response.setHeader('Content-Type', 'text/plain');
-	response.write('Header\n');
-	response.write('Search\n');
-	response.end('Footer\n');	
+  	response.setHeader('Content-Type', 'text/plain');
+	renderer.view('header', {}, response);
+	renderer.view('search', {}, response);
+	renderer.view('footer', {}, response);
+	response.end();
 	}
 	//show search
 }
@@ -26,7 +27,7 @@ function user(request, response){
 	if(username.length > 0){
 		response.statusCode = 200;
 	  	response.setHeader('Content-Type', 'text/plain');
-		response.write('Header\n');
+		renderer.view('header', {}, response);
 
 		//get the JSON from treehouse
 		var studentProfile = new Profile(username);
@@ -43,18 +44,19 @@ function user(request, response){
 				javascriptPoints: profileJSON.points.Javascript
 			}
 			//simple response
-			response.write(`${values.username} has ${values.badges}`);
-			response.end('Footer\n');	
+			renderer.view('profile', values, response);
+			renderer.view('footer', {}, response);
+			response.end();	
 		});
 		
 		//on 'error'
 		studentProfile.on("error", function(error){
 			//show error
-			response.write(error.message)
+			renderer.view('error', {errorMessage: error.message}, response);
+			renderer.view('search', {}, response);
+			renderer.view('footer', {}, response);
 			response.end();		
 		});
-			
-		
 		
 		}
 }
