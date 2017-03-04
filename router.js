@@ -10,7 +10,7 @@ function home(request, response){
 
 		if(request.method.toLowerCase() === "get"){
 			response.statusCode = 200;
-		  response.setHeader('Content-Type', 'text/html');
+		  	response.setHeader('Content-Type', 'text/html');
 			renderer.view('header', {}, response);
 			renderer.view('search', {}, response);
 			renderer.view('footer', {}, response);
@@ -21,6 +21,8 @@ function home(request, response){
 			//get the post data from body
 			request.on("data", function(postBody){
 					var query = querystring.parse(postBody.toString());
+					response.writeHead(303, {"Location": "/" + query.username});
+					response.end();
 			});
 			//extract the username
 			//redirect to /:username
